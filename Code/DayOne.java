@@ -1,6 +1,7 @@
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -21,6 +22,7 @@ class DayOne {
             quicksort(leftList, 0, leftList.length - 1);
             quicksort(rightList, 0, rightList.length - 1);
 
+            // Question 1
             int[] differenceList = new int[lines.size()];
 
             for(int i = 0; i < lines.size(); i++) {
@@ -31,8 +33,23 @@ class DayOne {
             for (int i : differenceList) {
                 sum += i;
             }
-            System.out.println(sum);
+            System.out.println("ID difference: " + sum);
 
+            // Question 2
+            HashMap<Integer, Integer> numCount = new HashMap<>();
+
+            for (int i: rightList) {
+                numCount.put(i, numCount.get(i) == null ? 1 : numCount.get(i) + 1);
+            }
+
+            int similarityScore = 0;
+
+            for (int i : leftList) {
+                if (numCount.get(i) != null)
+                    similarityScore += i * numCount.get(i);
+            }
+
+            System.out.println("Similarity score: " + similarityScore);
         } catch(IOException e) {
             e.printStackTrace();
             System.exit(1);
