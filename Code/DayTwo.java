@@ -10,7 +10,7 @@ public class DayTwo {
 
             ArrayList<ArrayList<Integer>> nums = new ArrayList<>();
             for (String l : lines) {
-                String[] vals = l.split("\\s+");
+                String[] vals = l.split("^Mod([0-9][0-9][0-9])");
                 ArrayList<Integer> temp = new ArrayList<>();
                 for (String s : vals) {
                     temp.add(Integer.parseInt(s));
@@ -18,14 +18,31 @@ public class DayTwo {
                 nums.add(temp);
             }
 
-            // Question 1
-            boolean[] safe = new boolean[nums.size()];
-            
+            // Question 1   
             int count = 0;
             for (int i = 0; i < nums.size(); i++) {
                 if (isStrictlyMonotonic(nums.get(i)) && changesSmallEnough(nums.get(i))) count++;
             }
+            System.out.println(count);
 
+            // Question 2   
+            count = 0;
+            for (int i = 0; i < nums.size(); i++) {
+                if (isStrictlyMonotonicFixable(nums.get(i)) && changesSmallEnough(nums.get(i))) { 
+                    System.out.println("Safe " + lines.get(i));    
+                    count++;
+                }
+                else if (!isStrictlyMonotonicFixable(nums.get(i))) {
+                    System.out.println("Unsafe monotonic " + lines.get(i));
+                }
+                else if (!changesSmallEnough(nums.get(i))) {
+                    System.out.println("Unsafe gap " + lines.get(i));
+                }
+                else {
+                    System.out.println("Unsafe " + lines.get(i));    
+                }
+                //if (isStrictlyMonotonicFixable(nums.get(i)) && changesSmallEnough(nums.get(i))) count++;
+            }
             System.out.println(count);
         } catch (IOException e) {
             e.printStackTrace();
@@ -48,6 +65,7 @@ public class DayTwo {
         boolean decreasing = true;
         boolean increasing = true;
         
+        boolean failedOnce = false;
         int last = Integer.MIN_VALUE;
         for (Integer i : list) {
             if (i <= last) {
@@ -57,10 +75,46 @@ public class DayTwo {
         }
         if (increasing) return true;
 
+        failedOnce = false;
         last = Integer.MAX_VALUE;
         for (Integer i : list) {
             if (i >= last) {
                 decreasing = false;
+            }
+            last = i;
+        }
+        if (decreasing) return true;
+
+        return false;
+    }
+
+
+    // for part 2
+    private static Boolean isStrictlyMonotonicFixable(ArrayList<Integer> list) {
+        boolean decreasing = true;
+        boolean increasing = true;
+        
+        boolean failedOnce = false;
+        int last = Integer.MIN_VALUE;
+        for (Integer i : list) {
+            if (i <= last) {
+                if (failedOnce)
+                    increasing = false;
+                else
+                    failedOnce = true;
+            }
+            last = i;
+        }
+        if (increasing) return true;
+
+        failedOnce = false;
+        last = Integer.MAX_VALUE;
+        for (Integer i : list) {
+            if (i >= last) {
+                if (failedOnce)
+                    decreasing = false;
+                else
+                    failedOnce = true;
             }
             last = i;
         }
